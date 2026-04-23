@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Detrás del Show</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;1,400;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:           #07070f;
+    --surface:      #0e0e1a;
+    --surface-2:    #161624;
+    --border:       #1f1f32;
+
+    --text:         #f0f0f8;
+    --text-muted:   #8080a0;
+    --text-dim:     #404058;
+
+    --accent:       #ff2d78;
+    --accent-glow:  rgba(255,45,120,0.15);
+
+    --secondary:    #a855f7;
+    --secondary-glow: rgba(168,85,247,0.12);
+
+    --gold:         #f59e0b;
+    --gold-glow:    rgba(245,158,11,0.12);
+
+    --green:        #10b981;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-snap-type: y mandatory; scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    overflow-x: hidden;
+  }
+
+  .slide {
+    min-height: 100vh;
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .slide-content { max-width: 1000px; width: 100%; }
+
+  /* ── Slide counter ── */
+  .slide-num {
+    position: absolute; top: 28px; right: 36px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 1.5px;
+    color: var(--text-dim);
+  }
+
+  /* ── Nav dots ── */
+  .nav-dots {
+    position: fixed; right: 18px; top: 50%;
+    transform: translateY(-50%);
+    display: flex; flex-direction: column; gap: 9px; z-index: 100;
+  }
+  .nav-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--text-dim); opacity: 0.35; cursor: pointer;
+    transition: all 0.3s;
+  }
+  .nav-dot.active {
+    opacity: 1; background: var(--accent);
+    box-shadow: 0 0 8px var(--accent-glow);
+    transform: scale(1.5);
+  }
+
+  /* ── Typography ── */
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--accent); margin-bottom: 14px;
+  }
+  h1 {
+    font-size: 84px; font-weight: 700; line-height: 0.95;
+    letter-spacing: -4px;
+  }
+  h2 {
+    font-size: 44px; font-weight: 700;
+    letter-spacing: -1.5px; margin-bottom: 32px; line-height: 1.1;
+  }
+  .highlight        { color: var(--accent); }
+  .highlight-gold   { color: var(--gold); }
+  .highlight-purple { color: var(--secondary); }
+
+  /* ── TITLE SLIDE ── */
+  .slide-title {
+    text-align: center;
+    background: linear-gradient(160deg, #0a0a14 0%, #0e0816 100%);
+  }
+  .slide-title::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 700px 500px at 30% 60%, rgba(255,45,120,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 500px 400px at 75% 30%, rgba(168,85,247,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .slide-title h1 { margin-bottom: 24px; position: relative; }
+  .slide-title .subtitle {
+    font-family: 'Playfair Display', serif;
+    font-style: italic; font-size: 22px;
+    color: var(--text-muted); margin-bottom: 40px; position: relative;
+  }
+  .slide-title .divider {
+    width: 52px; height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--secondary));
+    margin: 0 auto 24px; border-radius: 2px; position: relative;
+  }
+  .slide-title .meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 4px; color: var(--text-dim);
+    position: relative;
+  }
+
+  /* ── QUOTE SLIDE ── */
+  .big-quote {
+    font-size: 42px; font-weight: 700; line-height: 1.3;
+    letter-spacing: -1.5px; max-width: 820px; text-align: center;
+  }
+  .big-quote em {
+    font-family: 'Playfair Display', serif;
+    color: var(--gold); font-style: italic;
+  }
+  .subtext {
+    font-size: 17px; color: var(--text-muted);
+    margin-top: 28px; text-align: center;
+    max-width: 600px; line-height: 1.65;
+  }
+
+  /* ── PHOTO SLIDE ── */
+  .photo-slide {
+    padding: 0;
+    background: #000;
+  }
+  .photo-wrap {
+    position: relative; width: 100%; height: 100vh;
+    display: flex; flex-direction: column;
+    justify-content: flex-end;
+  }
+  .photo-wrap img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    opacity: 0.82;
+  }
+  .photo-caption {
+    position: relative; z-index: 2;
+    padding: 40px 60px 48px;
+    background: linear-gradient(0deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 60%, transparent 100%);
+  }
+  .photo-caption .cat {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 4px; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 10px;
+    display: block;
+  }
+  .photo-caption h2 {
+    font-size: 38px; margin-bottom: 8px; letter-spacing: -1px;
+    font-weight: 700; color: #fff;
+  }
+  .photo-caption p {
+    font-size: 15px; color: rgba(255,255,255,0.65);
+    max-width: 580px; line-height: 1.6;
+  }
+  .photo-slide .slide-num { color: rgba(255,255,255,0.3); z-index: 3; }
+
+  /* ── CONTENT GRID ── */
+  .file-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .file-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 22px 24px;
+  }
+  .file-card.primary {
+    grid-column: 1 / -1;
+    border-color: var(--accent);
+    background: linear-gradient(135deg, var(--accent-glow), transparent);
+  }
+  .file-name {
+    font-family: 'JetBrains Mono', monospace; font-size: 14px;
+    font-weight: 600; color: var(--accent); margin-bottom: 7px;
+  }
+  .file-card.primary .file-name { font-size: 17px; }
+  .file-desc { font-size: 13px; color: var(--text-muted); line-height: 1.55; }
+  .file-card.primary .file-desc { font-size: 14px; }
+  .file-badge {
+    display: inline-block; margin-top: 10px;
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    letter-spacing: 1px; padding: 3px 9px; border-radius: 4px;
+    background: var(--accent-glow); color: var(--accent);
+  }
+  .file-badge.purple { background: var(--secondary-glow); color: var(--secondary); }
+  .file-badge.gold   { background: var(--gold-glow);      color: var(--gold); }
+
+  /* ── STATS ── */
+  .results-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 16px; margin-top: 28px;
+  }
+  .result-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 26px 18px; text-align: center;
+  }
+  .result-emoji { font-size: 30px; margin-bottom: 10px; }
+  .result-stat {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 28px; font-weight: 700;
+    color: var(--accent); margin-bottom: 6px; line-height: 1.1;
+  }
+  .result-stat.gold   { color: var(--gold); }
+  .result-stat.purple { color: var(--secondary); }
+  .result-label { font-size: 13px; color: var(--text-muted); line-height: 1.4; }
+  .results-list {
+    margin-top: 28px; list-style: none;
+    display: flex; flex-direction: column; gap: 10px;
+    max-width: 700px; width: 100%;
+  }
+  .results-list li {
+    font-size: 15px; color: var(--text-muted); line-height: 1.45;
+    padding: 11px 18px; background: var(--surface);
+    border-radius: 8px; border-left: 3px solid var(--accent);
+  }
+  .results-list li.purple { border-left-color: var(--secondary); }
+  .results-list li.gold   { border-left-color: var(--gold); }
+
+  /* ── CTA ── */
+  .slide-cta { text-align: center; }
+  .slide-cta::before {
+    content: ''; position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 600px 600px at 50% 50%, rgba(255,45,120,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .slide-cta h2 {
+    font-size: 58px; font-weight: 700;
+    letter-spacing: -2.5px; margin-bottom: 20px; position: relative;
+  }
+  .cta-sub {
+    font-family: 'Playfair Display', serif; font-style: italic;
+    font-size: 20px; color: var(--text-muted);
+    margin-bottom: 44px; line-height: 1.5; position: relative;
+  }
+  .cta-links { display: flex; gap: 14px; justify-content: center; position: relative; }
+  .cta-link {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px;
+    padding: 13px 28px; border-radius: 8px;
+    text-decoration: none; transition: all 0.25s; letter-spacing: 0.5px;
+  }
+  .cta-link.primary { background: var(--accent); color: #fff; font-weight: 700; }
+  .cta-link.primary:hover {
+    box-shadow: 0 0 36px rgba(255,45,120,0.5);
+    transform: translateY(-2px);
+  }
+  .cta-link.secondary {
+    border: 1px solid var(--border); color: var(--text-muted);
+  }
+  .cta-link.secondary:hover { border-color: var(--text-dim); color: var(--text); }
+  .author-line {
+    margin-top: 50px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 4px; color: var(--text-dim);
+    position: relative;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(22px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .animate { opacity: 0; }
+  .animate.visible { animation: fadeUp 0.65s ease forwards; }
+  .delay-1 { animation-delay: 0.10s; }
+  .delay-2 { animation-delay: 0.22s; }
+  .delay-3 { animation-delay: 0.36s; }
+  .delay-4 { animation-delay: 0.50s; }
+  .delay-5 { animation-delay: 0.65s; }
+
+  /* Photo slides animate the caption */
+  .photo-slide .photo-caption .cat,
+  .photo-slide .photo-caption h2,
+  .photo-slide .photo-caption p { opacity: 0; }
+  .photo-slide.seen .photo-caption .cat {
+    animation: fadeUp 0.5s 0.1s ease forwards;
+  }
+  .photo-slide.seen .photo-caption h2 {
+    animation: fadeUp 0.6s 0.2s ease forwards;
+  }
+  .photo-slide.seen .photo-caption p {
+    animation: fadeUp 0.6s 0.35s ease forwards;
+  }
+</style>
+</head>
+<body>
+
+<div class="nav-dots" id="navDots"></div>
+
+<!-- ══════════════════════════════════════
+     SLIDE 1 — TÍTULO
+     ══════════════════════════════════════ -->
+<div class="slide slide-title" id="slide-1">
+  <div class="slide-num">01 / 12</div>
+  <div class="section-label animate">FOTOGRAFÍA DE PRODUCCIÓN</div>
+  <h1 class="animate delay-1">Detrás<br>del <span class="highlight">Show</span></h1>
+  <p class="subtitle animate delay-2">La anatomía invisible de un concierto en vivo</p>
+  <div class="divider animate delay-3"></div>
+  <p class="meta animate delay-3">GRUPO FRONTERA · PRODUCCIÓN EN VIVO · 2025</p>
+</div>
+
+<!-- ══════════════════════════════════════
+     SLIDE 2 — QUOTE
+     ══════════════════════════════════════ -->
+<div class="slide" id="slide-2" style="background: radial-gradient(ellipse at 60% 40%, rgba(245,158,11,0.05) 0%, transparent 65%);">
+  <div class="slide-num">02 / 12</div>
+  <p class="big-quote animate">Lo que el público ve dura <em>dos horas.</em><br>Lo que no ve tarda <em>meses.</em></p>
+  <p class="subtext animate delay-2">Cada concierto es el resultado de centenares de decisiones: estructura, luz, sonido, logística, seguridad y el momento irrepetible en que todo converge.</p>
+</div>
+
+<!-- ══════════════════════════════════════
+     SLIDE 3 — ELEMENTOS DE PRODUCCIÓN (Grid)
+     ══════════════════════════════════════ -->
+<div class="slide" id="slide-3">
+  <div class="slide-num">03 / 12</div>
+  <div class="slide-content">
+    <div class="section-label animate">LOS PILARES</div>
+    <h2 class="animate delay-1">Qué compone<br>una <span class="highlight">producción</span></h2>
+    <div class="file-grid animate delay-2">
+      <div class="file-card primary">
+        <div class="file-name">🏗️ Escenario e infraestructura</div>
+        <div class="file-desc">Estructura de truss, tarima, pantallas LED y rigging. Todo calculado para soportar toneladas de equipo y resistir cualquier condición climática.</div>
+        <div class="file-badge">SEMANAS DE MONTAJE</div>
+      </div>
+      <div class="file-card">
+        <div class="file-name" style="color:var(--secondary)">💡 Iluminación</div>
+        <div class="file-desc">Cientos de fixtures moving heads, strobes y wash lights coordinados al milisegundo con la música.</div>
+        <div class="file-badge purple">DISEÑO LUMÍNICO</div>
+      </div>
+      <div class="file-card">
+        <div class="file-name" style="color:var(--gold)">🔥 Efectos especiales</div>
+        <div class="file-desc">Pirotecnia, llamas, CO₂ y confeti integrados a la narrativa del show. Sincronización exacta.</div>
+        <div class="file-badge gold">PYRO & SFX</div>
+      </div>
+      <div class="file-card">
+        <div class="file-name" style="color:var(--green)">🔊 Sonido</div>
+        <div class="file-desc">Line array, subwoofers, monitores en escena y sistema de in-ear para los artistas. Mezcla FOH y monitor.</div>
+      </div>
+      <div class="file-card">
+        <div class="file-name" style="color:var(--text-muted)">🛡️ Seguridad y logística</div>
+        <div class="file-desc">Control de accesos, médicos, policía municipal y coordinación con el venue para 20,000+ asistentes.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SLIDE 4 — FOTO: Escenario
+     ══════════════════════════════════════ -->
+<div class="slide photo-slide" id="slide-4">
+  <div class="slide-num">04 / 12</div>
+  <div class="photo-wrap">
+    <img src="slide_escenario.jpg" alt="Vista general del escenario">
+    <div class="photo-caption">
+      <span class="cat">Infraestructura</span>
+      <h2>El escenario</h2>
+      <p>Vista general del escenario antes del show. Banderas nacionales, estructura de truss, pantalla LED y los primeros asistentes formándose para entrar.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SLIDE 5 — FOTO: Iluminación
+     ══════════════════════════════════════ -->
+<div class="slide photo-slide" id="slide-5">
+  <div class="slide-num">05 / 12</div>
+  <div class="photo-wrap">
+    <img src="slide_iluminacion.jpg" alt="Rig de iluminación">
+    <div class="photo-caption">
+      <span class="cat" style="color:#a855f7">Iluminación</span>
+      <h2>El techo de luz</h2>
+      <p>Decenas de moving heads y wash lights montados en la estructura de truss. Cada fixture programado para transformar el escenario en algo completamente diferente con cada canción.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SLIDE 6 — FOTO: DJ apertura
+     ══════════════════════════════════════ -->
+<div class="slide photo-slide" id="slide-6">
+  <div class="slide-num">06 / 12</div>
+  <div class="photo-wrap">
+    <img src="slide_dj.jpg" alt="DJ abriendo el show">
+    <div class="photo-caption">
+      <span class="cat">Apertura</span>
+      <h2>La DJ</h2>
+      <p>El show abre con una DJ en consola Pioneer. Su set calienta al público y marca el tono de la noche, mientras la pantalla LED detrás despliega gráficos a todo color.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SLIDE 7 — FOTO: Acto de apertura
+     ══════════════════════════════════════ -->
+<div class="slide photo-slide" id="slide-7">
+  <div class="slide-num">07 / 12</div>
+  <div class="photo-wrap">
+    <img src="slide_apertura.jpg" alt="Acto de apertura">
+    <div class="photo-caption">
+      <span class="cat">Acto de apertura</span>
+      <h2>Antes del headliner</h2>
+      <p>Un guitarrista entrega todo en la apertura. Ojos cerrados, cuerpo entregado al instrumento. La producción ya está en pleno funcionamiento: luces, monitores, cámaras.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SLIDE 8 — FOTO: Artista de espaldas
+     ══════════════════════════════════════ -->
+<div class="slide photo-slide" id="slide-8">
+  <div class="slide-num">08 / 12</div>
+  <div class="photo-wrap">
+    <img src="slide_artista_back.jpg" alt="Artista frente al público">
+    <div class="photo-caption">
+      <span class="cat" style="color:#f59e0b">El momento</span>
+      <h2>Artista y público</h2>
+      <p>La imagen que define un concierto: el artista de espaldas, miles de personas al frente. Todo lo que se construyó durante meses existe para que ocurra este segundo.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SLIDE 9 — FOTO: Fuego y músicos
+     ══════════════════════════════════════ -->
+<div class="slide photo-slide" id="slide-9">
+  <div class="slide-num">09 / 12</div>
+  <div class="photo-wrap">
+    <img src="slide_fuego.jpg" alt="Músicos con efecto de fuego">
+    <div class="photo-caption">
+      <span class="cat" style="color:#f59e0b">Efectos especiales</span>
+      <h2>Fuego en escena</h2>
+      <p>El acordeón y la guitarra al frente, un muro de llamas como telón. Los efectos de pirotecnia se sincronizan con los momentos climáticos de la música.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SLIDE 10 — FOTO: Silueta
+     ══════════════════════════════════════ -->
+<div class="slide photo-slide" id="slide-10">
+  <div class="slide-num">10 / 12</div>
+  <div class="photo-wrap">
+    <img src="slide_silhouette.jpg" alt="Silueta del artista">
+    <div class="photo-caption">
+      <span class="cat" style="color:#a855f7">Atmósfera</span>
+      <h2>La silueta</h2>
+      <p>Contra un fondo de puntos azules que simulan un cielo nocturno, la silueta del artista en rojo. Una de las imágenes más poderosas del show: diseño lumínico que se convierte en arte.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SLIDE 11 — FOTO: Frontera en lluvia
+     ══════════════════════════════════════ -->
+<div class="slide photo-slide" id="slide-11">
+  <div class="slide-num">11 / 12</div>
+  <div class="photo-wrap">
+    <img src="slide_lluvia.jpg" alt="FRONTERA bajo la lluvia">
+    <div class="photo-caption">
+      <span class="cat" style="color:#10b981">Grupo Frontera</span>
+      <h2>El show no para</h2>
+      <p>La lluvia cae sobre el escenario pero el show continúa. El letrero de neón "FRONTERA" brilla en verde bajo la tormenta. Una imagen que resume la entrega total de la producción.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SLIDE 12 — STATS
+     ══════════════════════════════════════ -->
+<div class="slide" id="slide-12">
+  <div class="slide-num">12 / 12</div>
+  <div class="slide-content" style="display:flex;flex-direction:column;align-items:center">
+    <div class="section-label animate">DETRÁS DE CÁMARAS</div>
+    <h2 class="animate delay-1" style="text-align:center">Los números<br><span class="highlight">del show</span></h2>
+    <div class="results-grid animate delay-2" style="max-width:900px;width:100%">
+      <div class="result-card" style="border-color:rgba(255,45,120,0.3)">
+        <div class="result-emoji">👥</div>
+        <div class="result-stat">+20K</div>
+        <div class="result-label">Asistentes al evento</div>
+      </div>
+      <div class="result-card" style="border-color:rgba(245,158,11,0.3)">
+        <div class="result-emoji">💡</div>
+        <div class="result-stat gold">200+</div>
+        <div class="result-label">Fixtures de iluminación en el rig</div>
+      </div>
+      <div class="result-card" style="border-color:rgba(168,85,247,0.3)">
+        <div class="result-emoji">🔥</div>
+        <div class="result-stat purple">12</div>
+        <div class="result-label">Disparos de pirotecnia en el set</div>
+      </div>
+    </div>
+    <ul class="results-list animate delay-3">
+      <li class="gold">La estructura de truss tardó <strong style="color:var(--text)">3 días completos</strong> en montarse y riggearse</li>
+      <li class="purple">La DJ, el acto de apertura y Grupo Frontera — <strong style="color:var(--text)">5 horas de show continuo</strong></li>
+      <li>El show continuó a pesar de la lluvia — sin interrupciones, sin cancelaciones</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SLIDE 13 — CTA / CIERRE con foto
+     ══════════════════════════════════════ -->
+<div class="slide photo-slide slide-cta-photo" id="slide-13" style="padding:0">
+  <div class="slide-num" style="color:rgba(255,255,255,0.3);z-index:3">13 / 13</div>
+  <div class="photo-wrap">
+    <img src="slide_crowd.jpg" alt="El público">
+    <div class="photo-caption" style="text-align:center;padding-bottom:64px">
+      <span class="cat" style="text-align:center;display:block;margin-bottom:14px">EL PÚBLICO</span>
+      <h2 style="font-size:52px;letter-spacing:-2px;margin-bottom:16px">Para esto <span style="color:var(--accent)">es todo</span></h2>
+      <p style="margin:0 auto 36px;max-width:520px;font-size:16px">Miles de horas de trabajo. Decenas de equipos. Todo para que una persona, en medio de la multitud, viva algo que no va a olvidar.</p>
+      <div style="display:flex;gap:14px;justify-content:center">
+        <a href="#" class="cta-link primary" style="font-family:'JetBrains Mono',monospace;font-size:12px;padding:12px 26px;background:var(--accent);color:#fff;border-radius:8px;text-decoration:none;font-weight:700">Ver más fotos →</a>
+        <a href="#" class="cta-link secondary" style="font-family:'JetBrains Mono',monospace;font-size:12px;padding:12px 26px;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.6);border-radius:8px;text-decoration:none">Contacto</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const dotsContainer = document.getElementById('navDots');
+
+  slides.forEach((_, i) => {
+    const dot = document.createElement('div');
+    dot.className = 'nav-dot';
+    dot.addEventListener('click', () => slides[i].scrollIntoView({ behavior: 'smooth' }));
+    dotsContainer.appendChild(dot);
+  });
+
+  const dots = document.querySelectorAll('.nav-dot');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const slide = entry.target;
+
+      // Text animations
+      slide.querySelectorAll('.animate').forEach(el => el.classList.add('visible'));
+
+      // Photo slide caption
+      if (slide.classList.contains('photo-slide')) {
+        slide.classList.add('seen');
+      }
+
+      // Active dot
+      const idx = [...slides].indexOf(slide);
+      dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+    });
+  }, { threshold: 0.5 });
+
+  slides.forEach(s => observer.observe(s));
+
+  // Keyboard navigation
+  document.addEventListener('keydown', e => {
+    const cur = [...slides].findIndex(s => {
+      const r = s.getBoundingClientRect();
+      return r.top >= -100 && r.top <= window.innerHeight / 2;
+    });
+    if ((e.key === 'ArrowDown' || e.key === 'ArrowRight') && cur < slides.length - 1) {
+      e.preventDefault();
+      slides[cur + 1].scrollIntoView({ behavior: 'smooth' });
+    }
+    if ((e.key === 'ArrowUp' || e.key === 'ArrowLeft') && cur > 0) {
+      e.preventDefault();
+      slides[cur - 1].scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+</script>
+</body>
+</html>

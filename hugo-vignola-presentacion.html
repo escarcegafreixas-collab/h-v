@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="screen-orientation" content="landscape">
+<script>
+  if (screen.orientation && screen.orientation.lock) {
+    screen.orientation.lock('landscape').catch(() => {});
+  }
+</script>
+<title>Hugo Vignola — Producción de Eventos</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #09090e;
+    --surface: #111119;
+    --surface-2: #1a1a26;
+    --border: #242434;
+
+    --text: #f0f0f5;
+    --text-muted: #9090a8;
+    --text-dim: #505068;
+
+    --accent: #D4A847;
+    --accent-glow: rgba(212, 168, 71, 0.12);
+    --accent-dark: rgba(212, 168, 71, 0.08);
+
+    --pink: #ff2d78;
+    --pink-glow: rgba(255, 45, 120, 0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-snap-type: y mandatory; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    overflow-x: hidden;
+  }
+
+  .slide {
+    min-height: 100vh;
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: clamp(16px, 3.5vh, 60px) clamp(20px, 5vw, 80px);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .slide-content {
+    max-width: 1000px;
+    width: 100%;
+  }
+
+  /* ============================================
+     SLIDE COUNTER
+     ============================================ */
+  .slide-num {
+    position: absolute;
+    top: 32px;
+    right: 44px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+  }
+
+  /* ============================================
+     NAV DOTS
+     ============================================ */
+  .nav-dots {
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 100;
+  }
+  .nav-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--text-dim);
+    opacity: 0.4;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .nav-dot.active {
+    opacity: 1;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent-glow);
+  }
+
+  /* ============================================
+     TYPOGRAPHY
+     ============================================ */
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: clamp(9px, min(1.2vw, 2.2vh), 13px);
+    letter-spacing: clamp(2px, 0.3vw, 4px);
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: clamp(6px, 1.2vh, 14px);
+  }
+
+  h1 {
+    font-size: clamp(26px, min(5vw, 8vh), 68px);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -1.5px;
+    color: #ffffff;
+  }
+  h2 {
+    font-size: clamp(20px, min(3.8vw, 6.5vh), 46px);
+    font-weight: 700;
+    letter-spacing: -1px;
+    margin-bottom: clamp(12px, 2.5vh, 32px);
+    line-height: 1.1;
+    color: #ffffff;
+  }
+
+  .highlight { color: var(--accent); }
+  .highlight-pink { color: var(--pink); }
+
+  .subtitle {
+    font-family: 'Newsreader', serif;
+    font-style: italic;
+    font-size: clamp(13px, min(1.8vw, 3.5vh), 20px);
+    color: var(--text-muted);
+  }
+
+  /* ============================================
+     SLIDE 1: TITLE
+     ============================================ */
+  .slide-title { text-align: center; }
+  .slide-title h1 { margin-bottom: 24px; }
+  .slide-title .subtitle { margin-bottom: 36px; }
+  .slide-title .divider {
+    width: 40px;
+    height: 2px;
+    background: var(--accent);
+    margin: 0 auto 20px;
+    border-radius: 2px;
+  }
+  .slide-title .author {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 4px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+  .title-glow {
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, var(--accent-glow) 0%, transparent 65%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  /* ============================================
+     QUOTE / STATEMENT
+     ============================================ */
+  .big-quote {
+    font-size: clamp(20px, min(3.8vw, 6vh), 50px);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -1.5px;
+    max-width: 900px;
+    text-align: center;
+    color: #ffffff;
+  }
+  .big-quote em {
+    font-family: 'Newsreader', serif;
+    color: var(--accent);
+    font-style: italic;
+  }
+  .subtext {
+    font-size: clamp(11px, min(1.4vw, 3vh), 17px);
+    color: var(--text-muted);
+    margin-top: clamp(14px, 2.5vh, 28px);
+    text-align: center;
+    max-width: 640px;
+  }
+  .statement-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 3px;
+    color: var(--pink);
+    text-transform: uppercase;
+    margin-top: 36px;
+    text-align: center;
+  }
+
+  /* ============================================
+     EVENTS TABLE
+     ============================================ */
+  .events-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+  }
+  .events-table thead th {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-align: left;
+    padding: 7px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .events-table tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.2s;
+  }
+  .events-table tbody tr:hover {
+    background: var(--surface);
+  }
+  .events-table tbody tr:last-child { border-bottom: none; }
+  .events-table td {
+    padding: 9px 16px;
+    font-size: 13px;
+  }
+  .events-table td:first-child {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text);
+  }
+  .events-table td.num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .events-table td.tag-cell {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .tag-intl {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: var(--accent-dark);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+  }
+  .tag-special {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: var(--pink-glow);
+    border: 1px solid var(--pink);
+    color: var(--pink);
+  }
+  .total-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 20px;
+    padding: 14px 20px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .total-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+  .total-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  /* ============================================
+     PHOTO SLIDE (FULL BLEED)
+     ============================================ */
+  .slide-photo {
+    padding: 0;
+    position: relative;
+  }
+  .slide-photo .photo-bg, .slide-title .photo-bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    z-index: 0;
+  }
+  .slide-photo .photo-overlay, .slide-title .photo-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      rgba(9,9,14,0.92) 0%,
+      rgba(9,9,14,0.45) 45%,
+      rgba(9,9,14,0.15) 100%
+    );
+    z-index: 1;
+  }
+  .slide-photo .photo-content {
+    position: relative;
+    z-index: 2;
+    padding: 0 clamp(24px, 5vw, 80px) clamp(24px, 5vh, 80px);
+    align-self: flex-end;
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .photo-caption {
+    font-size: clamp(18px, min(3.4vw, 6.5vh), 44px);
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+    margin-bottom: clamp(6px, 1.2vh, 14px);
+    color: #ffffff;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.5);
+  }
+  .photo-sub {
+    font-size: clamp(11px, min(1.4vw, 3vh), 17px);
+    color: rgba(240,240,245,0.75);
+    font-family: 'Newsreader', serif;
+    font-style: italic;
+    line-height: 1.55;
+  }
+  .slide-photo .slide-num {
+    z-index: 3;
+    color: rgba(240,240,245,0.4);
+  }
+
+  /* ============================================
+     SERVICES SLIDE
+     ============================================ */
+  .services-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(6px, 1vw, 12px);
+    margin-top: clamp(6px, 1vh, 8px);
+  }
+  .service-item {
+    display: flex;
+    align-items: flex-start;
+    gap: clamp(8px, 1vw, 14px);
+    padding: clamp(10px, 1.5vh, 16px) clamp(12px, 1.5vw, 20px);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    transition: border-color 0.2s;
+  }
+  .service-item:hover { border-color: #383850; }
+  .service-icon {
+    font-size: 22px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .service-name {
+    font-size: clamp(12px, 1.4vw, 15px);
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+  .service-desc {
+    font-size: clamp(10px, 1.1vw, 12px);
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+  .services-footer {
+    margin-top: clamp(10px, 1.5vh, 16px);
+    text-align: center;
+    font-family: 'Newsreader', serif;
+    font-style: italic;
+    font-size: clamp(13px, 1.5vw, 18px);
+    color: var(--accent);
+    letter-spacing: 0.5px;
+  }
+
+  /* ============================================
+     STATS SLIDE
+     ============================================ */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: clamp(8px, 1.2vw, 16px);
+    margin-top: clamp(8px, 1.5vh, 12px);
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: clamp(14px, 2.5vh, 28px) clamp(10px, 1.5vw, 20px);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center top, var(--accent-dark), transparent 70%);
+  }
+  .stat-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: clamp(22px, 3vw, 38px);
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: clamp(4px, 0.8vh, 8px);
+    position: relative;
+  }
+  .stat-label {
+    font-size: clamp(10px, 1.1vw, 13px);
+    color: var(--text-muted);
+    line-height: 1.4;
+    position: relative;
+  }
+
+  /* ============================================
+     WHO WE ARE
+     ============================================ */
+  .who-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(16px, 3vw, 48px);
+    align-items: center;
+    margin-top: clamp(4px, 1vh, 8px);
+  }
+  .who-text p {
+    font-size: clamp(11px, 1.3vw, 16px);
+    color: var(--text-muted);
+    line-height: 1.65;
+    margin-bottom: clamp(8px, 1.5vh, 16px);
+  }
+  .who-text p:last-child { margin-bottom: 0; }
+  .who-text strong { color: var(--text); }
+  .who-right {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(6px, 1vh, 12px);
+  }
+  .who-item {
+    display: flex;
+    align-items: center;
+    gap: clamp(8px, 1vw, 12px);
+    padding: clamp(8px, 1.5vh, 14px) clamp(10px, 1.5vw, 18px);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .who-item-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+  }
+  .who-item-text {
+    font-size: clamp(11px, 1.2vw, 14px);
+    color: var(--text-muted);
+  }
+  .who-item-text strong {
+    color: var(--text);
+    display: block;
+    font-size: clamp(12px, 1.3vw, 15px);
+    margin-bottom: 1px;
+  }
+
+  /* ============================================
+     CLOSING SLIDE (PHOTO + TEXT)
+     ============================================ */
+  .slide-closing {
+    padding: 0;
+    text-align: center;
+  }
+  .slide-closing .photo-bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center top;
+    z-index: 0;
+  }
+  .slide-closing .photo-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(9,9,14,0.5) 0%,
+      rgba(9,9,14,0.82) 100%
+    );
+    z-index: 1;
+  }
+  .closing-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    padding: clamp(24px, 4vh, 60px) clamp(24px, 4vw, 40px);
+    min-height: 100vh;
+  }
+  .closing-logo {
+    margin-bottom: clamp(12px, 2.5vh, 28px);
+    opacity: 0.95;
+  }
+  .closing-name {
+    font-size: clamp(10px, 1.2vw, 13px);
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: rgba(240,240,245,0.5);
+    margin-bottom: clamp(16px, 3vh, 32px);
+  }
+  .closing-tagline {
+    font-size: clamp(20px, min(3.5vw, 6vh), 48px);
+    font-weight: 700;
+    letter-spacing: -1px;
+    line-height: 1.1;
+    margin-bottom: clamp(4px, 1vh, 8px);
+    color: #ffffff;
+  }
+  .closing-sub {
+    font-family: 'Newsreader', serif;
+    font-style: italic;
+    font-size: clamp(12px, min(1.4vw, 3vh), 18px);
+    color: rgba(240,240,245,0.6);
+    margin-bottom: clamp(20px, 4vh, 48px);
+  }
+  .contact-row {
+    display: flex;
+    gap: 32px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .contact-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .contact-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .contact-val {
+    font-size: 14px;
+    color: rgba(240,240,245,0.7);
+  }
+  .contact-divider {
+    width: 1px;
+    height: 32px;
+    background: rgba(240,240,245,0.15);
+  }
+
+  /* ============================================
+     ANIMATIONS
+     ============================================ */
+  /* FADE SLIDESHOW */
+  .fade-bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    z-index: 0;
+    opacity: 0;
+    transition: opacity 1.5s ease-in-out;
+  }
+  .fade-bg.active { opacity: 1; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(22px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate { opacity: 0; }
+  .animate.visible { animation: fadeUp 0.65s ease forwards; }
+  .delay-1 { animation-delay: 0.1s; }
+  .delay-2 { animation-delay: 0.22s; }
+  .delay-3 { animation-delay: 0.34s; }
+  .delay-4 { animation-delay: 0.46s; }
+  .delay-5 { animation-delay: 0.58s; }
+
+  /* ============================================
+     MOBILE LANDSCAPE — ajuste fino por altura
+     ============================================ */
+  @media (max-height: 430px) {
+    .slide-title h1 { margin-bottom: 12px; }
+    .slide-title .subtitle { margin-bottom: 16px; }
+    .closing-logo { margin-bottom: 12px; display: none; }
+    .closing-name { margin-bottom: 16px; }
+    .total-row { margin-top: 8px; padding: 10px 14px; }
+    .total-label { font-size: 10px; }
+    .total-num { font-size: 18px; }
+    .events-table td { padding: 6px 12px; font-size: 12px; }
+    .events-table thead th { padding: 5px 12px; }
+    .nav-dots { display: none; }
+  }
+
+  /* iPhone SE landscape (667 × 375) — stats grid stays 4 col but compact */
+  @media (max-height: 380px) {
+    h2 { margin-bottom: 8px; }
+    .section-label { margin-bottom: 6px; }
+    .slide-content { max-width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="nav-dots" id="navDots"></div>
+
+<!-- ROTATE MESSAGE -->
+<div id="rotate-msg" style="display:none;position:fixed;inset:0;z-index:9999;background:#09090e;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px;">
+  <svg xmlns="http://www.w3.org/2000/svg" width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#D4A847" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:24px;animation:spin 2s ease-in-out infinite;">
+    <rect x="4" y="2" width="16" height="20" rx="2"/><path d="M12 18h.01"/>
+  </svg>
+  <p style="font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:600;color:#f0f0f5;margin-bottom:10px;">Gira tu teléfono</p>
+  <p style="font-family:'Newsreader',serif;font-style:italic;font-size:15px;color:#9090a8;">Esta presentación está diseñada para verse en horizontal.</p>
+</div>
+<style>
+  @keyframes spin {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(90deg); }
+  }
+  @media (orientation: portrait) and (max-width: 768px) {
+    #rotate-msg { display: flex !important; }
+  }
+</style>
+
+<!-- ============================
+     SLIDE 1: APERTURA
+     ============================ -->
+<div class="slide slide-title" id="slide-1" style="padding:0;text-align:center;">
+  <div class="slide-num" style="z-index:3;color:rgba(240,240,245,0.35);">01 / 12</div>
+  <div class="photo-bg" style="background-image:url('JPEGs/7.jpg');background-position:center 30%;"></div>
+  <div class="photo-overlay" style="background:linear-gradient(to bottom,rgba(9,9,14,0.55) 0%,rgba(9,9,14,0.65) 50%,rgba(9,9,14,0.80) 100%);"></div>
+  <div style="position:relative;z-index:2;padding:40px;">
+    <div class="section-label animate">Producción de Eventos · México</div>
+    <h1 class="animate delay-1">Cuando quien<br>gobierna decide<br><span class="highlight">dar lo mejor.</span></h1>
+    <p class="subtitle animate delay-2">La gente lo recuerda mucho tiempo.</p>
+    <div class="animate delay-3" style="width:40px;height:2px;background:var(--accent);margin:28px auto;border-radius:2px;"></div>
+    <p class="author animate delay-3">HUGO VIGNOLA · PRODUCCIÓN DE EVENTOS</p>
+  </div>
+</div>
+
+<!-- ============================
+     SLIDE 2: STATEMENT
+     ============================ -->
+<div class="slide slide-photo" id="slide-2" style="text-align:center;">
+  <div class="slide-num" style="z-index:3;color:rgba(240,240,245,0.35);">02 / 12</div>
+  <video autoplay muted loop playsinline style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;">
+    <source src="malilla_limpio.mp4" type="video/mp4">
+  </video>
+  <div class="photo-overlay" style="background:linear-gradient(to bottom,rgba(9,9,14,0.45) 0%,rgba(9,9,14,0.70) 100%);z-index:1;"></div>
+  <div style="position:relative;z-index:2;padding:40px;display:flex;flex-direction:column;align-items:center;">
+    <p class="big-quote animate">Cuando se apuesta por la gente,<br>se elige lo <em>mejor.</em></p>
+    <p class="subtext animate delay-1">Escenarios de categoría mundial, artistas de alcance nacional e internacional, y una producción técnica impecable. Todo coordinado. Todo en tiempo. Todo bajo un mismo equipo.</p>
+    <p class="statement-tag animate delay-2">Ya lo hicimos. Lo volvemos a hacer.</p>
+  </div>
+</div>
+
+<!-- ============================
+     SLIDE 3: LOS EVENTOS
+     ============================ -->
+<div class="slide" id="slide-3" style="position:relative;">
+  <div class="slide-num">03 / 12</div>
+  <div style="position:absolute;inset:0;background-image:url('slide_crowd77.jpg');background-size:cover;background-position:center 40%;z-index:0;"></div>
+  <div style="position:absolute;inset:0;background:rgba(9,9,14,0.85);z-index:1;"></div>
+  <div class="slide-content" style="position:relative;z-index:2;">
+    <div class="section-label animate" style="margin-bottom:8px;">Historial de producción</div>
+    <h2 class="animate delay-1" style="font-size:32px;margin-bottom:16px;">Los eventos<br>que hicimos realidad</h2>
+    <div class="animate delay-2">
+      <table class="events-table">
+        <thead>
+          <tr>
+            <th>Artista</th>
+            <th>Aforo</th>
+            <th>Relevancia</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Grupo Frontera</td>
+            <td class="num">~60,000</td>
+            <td class="tag-cell"><span class="tag-intl">Internacional · Drones</span></td>
+          </tr>
+          <tr>
+            <td>Molotov</td>
+            <td class="num">~45,000</td>
+            <td class="tag-cell"><span class="tag-intl">Internacional</span></td>
+          </tr>
+          <tr>
+            <td>Belanova</td>
+            <td class="num">~45,000</td>
+            <td class="tag-cell"><span class="tag-intl">Internacional</span></td>
+          </tr>
+          <tr>
+            <td>Bobby Pulido</td>
+            <td class="num">~45,000</td>
+            <td class="tag-cell"><span class="tag-intl">Internacional</span></td>
+          </tr>
+          <tr>
+            <td>Malilla</td>
+            <td class="num">~45,000</td>
+            <td class="tag-cell"><span class="tag-intl">Nacional</span></td>
+          </tr>
+          <tr>
+            <td>Tokischa</td>
+            <td class="num">~30,000</td>
+            <td class="tag-cell"><span class="tag-intl">Internacional</span></td>
+          </tr>
+          <tr>
+            <td>Reyli</td>
+            <td class="num">~20,000</td>
+            <td class="tag-cell"><span class="tag-intl">Nacional</span></td>
+          </tr>
+          <tr>
+            <td>Bellakath</td>
+            <td class="num">~20,000</td>
+            <td class="tag-cell"><span class="tag-intl">Internacional</span></td>
+          </tr>
+          <tr>
+            <td>Santa Fe Klan</td>
+            <td class="num">~45,000</td>
+            <td class="tag-cell"><span class="tag-intl">Internacional</span></td>
+          </tr>
+          <tr>
+            <td>NSQK</td>
+            <td class="num">~30,000</td>
+            <td class="tag-cell"><span class="tag-intl">Internacional</span></td>
+          </tr>
+          <tr>
+            <td>90's Pop Tour</td>
+            <td class="num">~45,000</td>
+            <td class="tag-cell"><span class="tag-intl">Internacional</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ============================
+     SLIDE 4: FOTO ESCENARIO
+     ============================ -->
+<div class="slide slide-photo" id="slide-4">
+  <div class="slide-num">04 / 12</div>
+  <div class="fade-bg active" style="background-image:url('slide_escenario.jpg');"></div>
+  <div class="fade-bg" style="background-image:url('slide_s4_1.jpg');"></div>
+  <div class="fade-bg" style="background-image:url('slide_s4_2.jpg');"></div>
+  <div class="fade-bg" style="background-image:url('slide_s4_3.jpg');"></div>
+  <div class="fade-bg" style="background-image:url('slide_s4_99.jpg');"></div>
+  <div class="photo-overlay"></div>
+  <div class="photo-content animate">
+    <div class="section-label" style="color:#D4A847;text-shadow:0 1px 8px rgba(0,0,0,0.8);font-size:12px;">Infraestructura</div>
+    <div class="photo-caption">La infraestructura que<br>el artista exige.</div>
+    <div class="photo-sub" style="margin-bottom:20px;">Escenarios de categoría mundial, estructuras homologadas y montaje de precisión.</div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:clamp(10px,1.1vw,12px);letter-spacing:clamp(0.5px,0.1vw,1.5px);color:#D4A847;line-height:1.9;text-shadow:0 1px 8px rgba(0,0,0,0.8);">
+      Camerinos · Seguridad · Sanitarios · Protección Civil<br>
+      Vallas y accesos · Generadores · Primeros auxilios
+    </div>
+  </div>
+</div>
+
+<!-- ============================
+     SLIDE 5: SERVICIOS
+     ============================ -->
+<div class="slide" id="slide-5" style="position:relative;">
+  <div class="slide-num" style="z-index:3;color:rgba(240,240,245,0.35);">05 / 12</div>
+  <video autoplay muted loop playsinline style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;filter:contrast(1.3) brightness(1.1);">
+    <source src="video_16x9_stable.mp4" type="video/mp4">
+  </video>
+  <div style="position:absolute;inset:0;background:rgba(9,9,14,0.60);z-index:1;"></div>
+  <div class="slide-content" style="position:relative;z-index:2;">
+    <div class="section-label animate">Lo que hacemos</div>
+    <h2 class="animate delay-1">La experiencia completa</h2>
+    <div class="services-grid">
+      <div class="service-item animate delay-2">
+        <div>
+          <div class="service-name">Producción técnica integral</div>
+          <div class="service-desc">Escenarios, estructuras, backline y toda la maquinaria del show.</div>
+        </div>
+      </div>
+      <div class="service-item animate delay-2">
+        <div>
+          <div class="service-name">Sonido e iluminación</div>
+          <div class="service-desc">Equipos de primer nivel con operadores especializados.</div>
+        </div>
+      </div>
+      <div class="service-item animate delay-3">
+        <div>
+          <div class="service-name">Pirotecnia y efectos especiales</div>
+          <div class="service-desc">Fuego, confeti, pantallas LED y shows de drones certificados.</div>
+        </div>
+      </div>
+      <div class="service-item animate delay-3">
+        <div>
+          <div class="service-name">Gestión de artistas</div>
+          <div class="service-desc">Riders técnicos, hospitalidad, traslados y coordinación de representantes.</div>
+        </div>
+      </div>
+      <div class="service-item animate delay-4">
+        <div>
+          <div class="service-name">Permisos y trámites</div>
+          <div class="service-desc">Gestión completa ante autoridades, IMSS, Sagarpa, Protección Civil.</div>
+        </div>
+      </div>
+      <div class="service-item animate delay-4">
+        <div>
+          <div class="service-name">Seguridad y logística</div>
+          <div class="service-desc">Coordinación de accesos, vallas, personal y operativo de emergencias.</div>
+        </div>
+      </div>
+    </div>
+    <div class="services-footer animate delay-5">De principio a fin — un solo interlocutor.</div>
+  </div>
+</div>
+
+<!-- ============================
+     SLIDE 6: FOTO ILUMINACIÓN
+     ============================ -->
+<div class="slide" id="slide-6" style="padding:0;">
+  <div class="slide-num">06 / 12</div>
+  <div class="fade-bg active" style="background-image:url('slide_iluminacion.jpg');background-position:center center;" id="s6bg0"></div>
+  <div class="fade-bg" style="background-image:url('slide_s6_1.jpg');background-position:center center;" id="s6bg1"></div>
+  <div class="fade-bg" style="background-image:url('slide_s6_2.jpg');background-position:center center;" id="s6bg2"></div>
+  <div class="fade-bg" style="background-image:url('slide_s6_3.jpg');background-position:center center;" id="s6bg3"></div>
+  <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(9,9,14,0.45) 0%,rgba(9,9,14,0.72) 60%,rgba(9,9,14,0.88) 100%);z-index:1;"></div>
+  <div style="position:relative;z-index:2;padding:clamp(24px,4vh,60px) clamp(24px,5vw,80px);max-width:760px;" class="animate">
+    <div class="section-label" style="color:#D4A847;text-shadow:0 1px 8px rgba(0,0,0,0.8);">Diseño lumínico</div>
+    <div class="photo-caption">Cuando la luz<br>le habla al público.</div>
+    <div class="photo-sub" style="margin-bottom:0;">Cada producción tiene su propio diseño de iluminación — coordinado directamente con el equipo del artista, sincronizado al segundo con la música, y ejecutado con el nivel técnico que se exige en los escenarios más grandes del país. El público no ve equipos. Lo vive.</div>
+  </div>
+</div>
+
+<!-- ============================
+     SLIDE 7: FOTO EFECTOS
+     ============================ -->
+<div class="slide" id="slide-7" style="padding:0;position:relative;overflow:hidden;">
+  <div class="slide-num" style="z-index:3;color:rgba(240,240,245,0.4);">07 / 12</div>
+  <video autoplay muted loop playsinline style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;">
+    <source src="slide7_efectos.mp4" type="video/mp4">
+  </video>
+  <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(9,9,14,0.88) 0%,rgba(9,9,14,0.35) 60%,rgba(9,9,14,0.15) 100%);z-index:1;"></div>
+  <div class="photo-content animate" style="position:relative;z-index:2;padding:0 clamp(24px,5vw,80px) clamp(20px,4vh,72px);align-self:flex-end;width:100%;max-width:900px;margin:0 auto;">
+    <div class="section-label" style="color:#D4A847;text-shadow:0 1px 8px rgba(0,0,0,0.9)">Efectos especiales</div>
+    <div class="photo-caption">Lo que el público<br>nunca olvida.</div>
+    <div class="photo-sub">Fuego, lluvia de chispas, niebla, pirotecnia y efectos especiales integrados en tiempo real con la música. No son adornos — son parte de la experiencia. Trabajamos con los mismos recursos que usan los artistas en sus giras nacionales e internacionales, adaptados al espacio y con todos los permisos de protección civil.</div>
+  </div>
+</div>
+
+<!-- ============================
+     SLIDE 8: FOTO ARTISTA
+     ============================ -->
+<div class="slide" id="slide-8" style="padding:0;">
+  <div class="slide-num" style="z-index:3;color:rgba(240,240,245,0.4);">08 / 12</div>
+  <div class="fade-bg active" style="background-image:url('slide_s8.jpg');"></div>
+  <div class="fade-bg" style="background-image:url('slide_s8_2.jpg');"></div>
+  <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(9,9,14,0.88) 0%,rgba(9,9,14,0.3) 50%,rgba(9,9,14,0.1) 100%);z-index:1;"></div>
+  <div class="photo-content animate" style="max-width:900px;position:relative;z-index:2;padding:0 clamp(24px,5vw,80px) clamp(20px,4vh,72px);align-self:flex-end;width:100%;margin:0 auto;">
+    <div class="section-label" style="color:#D4A847;text-shadow:0 1px 8px rgba(0,0,0,0.9);">El momento</div>
+    <div class="photo-caption">Del contrato al escenario<br>— sin sorpresas.</div>
+    <div class="photo-sub">Gestionamos el rider, coordinamos al equipo de gira, atendemos hospitalidad y traslados. El artista llega, ensaya y actúa. La institución no tiene que resolver nada.</div>
+  </div>
+</div>
+
+<!-- ============================
+     SLIDE 9: FOTO PÚBLICO
+     ============================ -->
+<div class="slide slide-photo" id="slide-9">
+  <div class="slide-num">09 / 12</div>
+  <div class="photo-bg" style="background-image:url('slide_aerea.jpg');background-position:center center;"></div>
+  <div class="photo-overlay"></div>
+  <div class="photo-content animate">
+    <div class="section-label" style="color:#D4A847;text-shadow:0 1px 8px rgba(0,0,0,0.9)">El impacto</div>
+    <div class="photo-caption">Acceso a la cultura.<br>Eso también es gobernar bien.</div>
+    <div class="photo-sub">Un boleto en México puede costar entre $800 y $5,000 pesos — sin contar traslados ni hospedaje. Para quien vive fuera de la capital, es simplemente imposible. Cuando un gobierno produce un evento de calidad y abre las puertas sin costo, no está haciendo entretenimiento. Está haciendo política pública.</div>
+  </div>
+</div>
+
+<!-- ============================
+     SLIDE 10: LOS NÚMEROS
+     ============================ -->
+<div class="slide" id="slide-10" style="align-items:center;text-align:center;position:relative;">
+  <div class="slide-num" style="z-index:3;">10 / 12</div>
+  <video autoplay muted loop playsinline style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;filter:contrast(1.2) brightness(0.9);">
+    <source src="slide10_gente.mp4" type="video/mp4">
+  </video>
+  <div style="position:absolute;inset:0;background:rgba(9,9,14,0.78);z-index:1;"></div>
+  <div style="max-width:960px;width:100%;position:relative;z-index:2;">
+    <div class="section-label animate" style="justify-content:center;display:block">Los números</div>
+    <h2 class="animate delay-1" style="text-align:center;margin-bottom:40px">Lo que entregamos<br>en <span class="highlight">números reales</span></h2>
+    <div class="stats-grid animate delay-2">
+      <div class="stat-card">
+        <div class="stat-num">+430K</div>
+        <div class="stat-label">personas<br>en total</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">100%</div>
+        <div class="stat-label">paquete<br>completo</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">0</div>
+        <div class="stat-label">incidentes<br>de seguridad</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">$334</div>
+        <div class="stat-label">generados en la economía local<br>por cada $100 invertido en el evento</div>
+      </div>
+    </div>
+    <p class="animate delay-3" style="margin-top:clamp(16px,3vh,32px);font-family:'Newsreader',serif;font-style:italic;font-size:clamp(12px,1.6vw,19px);color:var(--text-muted);">Más de 430,000 personas. Cero incidentes. Una sola empresa detrás de todo.</p>
+  </div>
+</div>
+
+<!-- ============================
+     SLIDE 11: QUIÉNES SOMOS
+     ============================ -->
+<div class="slide" id="slide-11">
+  <div class="slide-num">11 / 12</div>
+  <div class="slide-content">
+    <div class="section-label animate">Quiénes somos</div>
+    <h2 class="animate delay-1">Hugo Vignola</h2>
+    <div class="who-layout">
+      <div class="who-text animate delay-2">
+        <p>Somos una empresa de <strong>producción integral de eventos masivos</strong>. Nos especializamos en el montaje y operación de espectáculos de gran formato para instituciones públicas, ayuntamientos y promotoras privadas en todo el país.</p>
+        <p>Nuestra ventaja es simple: <strong>un solo equipo para todo</strong>. Sin subcontratistas descoordinados, sin sorpresas de último momento. Tú hablas con nosotros; nosotros resolvemos el resto.</p>
+        <p>Llevamos años construyendo la capacidad técnica, los contactos y la logística necesaria para operar donde se nos necesite, a la escala que cada proyecto merece.</p>
+      </div>
+      <div class="who-right animate delay-3">
+        <div class="who-item">
+          <div class="who-item-dot"></div>
+          <div class="who-item-text">
+            <strong>Operación en todo el país</strong>
+            Red de proveedores y equipo con capacidad de moverse a cualquier sede
+          </div>
+        </div>
+        <div class="who-item">
+          <div class="who-item-dot"></div>
+          <div class="who-item-text">
+            <strong>Eventos hasta 60,000 personas</strong>
+            Capacidad probada en campo, no en papel
+          </div>
+        </div>
+        <div class="who-item">
+          <div class="who-item-dot"></div>
+          <div class="who-item-text">
+            <strong>Artistas nacionales e internacionales</strong>
+            Experiencia con riders complejos y equipos de gira
+          </div>
+        </div>
+        <div class="who-item">
+          <div class="who-item-dot"></div>
+          <div class="who-item-text">
+            <strong>Clientes públicos y privados</strong>
+            Municipios, gobiernos estatales, promotoras y organizadores privados
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================
+     SLIDE 12: CIERRE
+     ============================ -->
+<div class="slide slide-closing" id="slide-12">
+  <div class="slide-num" style="z-index:3;color:rgba(240,240,245,0.4);">12 / 12</div>
+  <div class="photo-bg" style="background-image:url('slide_silhouette.jpg');background-position:center 20%;"></div>
+  <div class="photo-overlay"></div>
+  <div class="closing-content animate">
+    <div class="closing-logo">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="80" height="80">
+        <circle cx="100" cy="100" r="90" fill="none" stroke="#ffffff" stroke-width="10"/>
+        <rect x="52" y="34" width="26" height="132" fill="#ffffff"/>
+        <rect x="122" y="34" width="26" height="132" fill="#ffffff"/>
+        <rect x="52" y="89" width="96" height="22" fill="#ffffff"/>
+      </svg>
+    </div>
+    <div class="closing-name">Hugo Miguel Vignola Palma</div>
+    <div class="closing-tagline">Ya lo hicimos.<br><span style="color:var(--accent)">Lo volvemos a hacer.</span></div>
+    <div class="closing-sub">Producción integral de eventos · México</div>
+    <div class="contact-row">
+      <div class="contact-item">
+        <div class="contact-label">Teléfono</div>
+        <div class="contact-val">+52 55 3480 5342</div>
+      </div>
+      <div class="contact-divider"></div>
+      <div class="contact-item">
+        <div class="contact-label">Correo</div>
+        <div class="contact-val">alonso.escarcega@ehmo.mx</div>
+      </div>
+      <div class="contact-divider"></div>
+      <div class="contact-item">
+        <div class="contact-label">Ciudad</div>
+        <div class="contact-val">México</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const dotsContainer = document.getElementById('navDots');
+  slides.forEach((_, i) => {
+    const dot = document.createElement('div');
+    dot.className = 'nav-dot';
+    dot.addEventListener('click', () => {
+      slides[i].scrollIntoView({ behavior: 'smooth' });
+    });
+    dotsContainer.appendChild(dot);
+  });
+
+  const dots = document.querySelectorAll('.nav-dot');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.querySelectorAll('.animate').forEach(el => {
+          el.classList.add('visible');
+        });
+        const index = [...slides].indexOf(entry.target);
+        dots.forEach((d, i) => d.classList.toggle('active', i === index));
+      }
+    });
+  }, { threshold: 0.5 });
+
+  slides.forEach(slide => observer.observe(slide));
+
+  // Fade slideshow for slide-4
+  const fadeBgs = document.querySelectorAll('#slide-4 .fade-bg');
+  let fadeIndex = 0;
+  setInterval(() => {
+    fadeBgs[fadeIndex].classList.remove('active');
+    fadeIndex = (fadeIndex + 1) % fadeBgs.length;
+    fadeBgs[fadeIndex].classList.add('active');
+  }, 3000);
+
+  // Fade slideshow for slide-6
+  const fadeBgs6 = document.querySelectorAll('#slide-6 .fade-bg');
+  let fadeIndex6 = 0;
+  setInterval(() => {
+    fadeBgs6[fadeIndex6].classList.remove('active');
+    fadeIndex6 = (fadeIndex6 + 1) % fadeBgs6.length;
+    fadeBgs6[fadeIndex6].classList.add('active');
+  }, 3000);
+
+  // Fade slideshow for slide-8
+  const fadeBgs8 = document.querySelectorAll('#slide-8 .fade-bg');
+  let fadeIndex8 = 0;
+  setInterval(() => {
+    fadeBgs8[fadeIndex8].classList.remove('active');
+    fadeIndex8 = (fadeIndex8 + 1) % fadeBgs8.length;
+    fadeBgs8[fadeIndex8].classList.add('active');
+  }, 3000);
+
+  document.addEventListener('keydown', (e) => {
+    const current = [...slides].findIndex(s => {
+      const rect = s.getBoundingClientRect();
+      return rect.top >= -100 && rect.top <= window.innerHeight / 2;
+    });
+
+    if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+      e.preventDefault();
+      if (current < slides.length - 1) slides[current + 1].scrollIntoView({ behavior: 'smooth' });
+    }
+    if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+      e.preventDefault();
+      if (current > 0) slides[current - 1].scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Logo Hugo Vignola — Opciones 3</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #080810;
+    color: #f0f0f8;
+    font-family: 'Space Grotesk', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 60px 40px;
+    gap: 56px;
+  }
+  h1 {
+    font-size: 13px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #404058;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 28px;
+    max-width: 960px;
+    width: 100%;
+  }
+  .option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+  }
+  .logo-box {
+    width: 160px; height: 160px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 16px;
+    background: #0e0e1a;
+    border: 1px solid #1f1f32;
+  }
+  .logo-box.light { background: #f5f5f7; }
+  .label { text-align: center; }
+  .label-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 3px;
+    color: #ff2d78; margin-bottom: 5px;
+  }
+  .label-name { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+  .label-desc { font-size: 11px; color: #505070; line-height: 1.5; max-width: 140px; }
+  .divider { width: 100%; max-width: 960px; height: 1px; background: #1f1f32; }
+  .section-title {
+    font-size: 11px; letter-spacing: 4px; text-transform: uppercase;
+    color: #404058; font-family: 'JetBrains Mono', monospace;
+    align-self: flex-start; max-width: 960px; width: 100%;
+  }
+  .ref-box {
+    display: flex; align-items: center; gap: 24px;
+    background: #0e0e1a; border: 1px dashed #2a2a44;
+    border-radius: 16px; padding: 24px 36px;
+    max-width: 960px; width: 100%;
+  }
+  .ref-label { font-size: 11px; color: #404058; font-family: 'JetBrains Mono', monospace; letter-spacing: 2px; }
+</style>
+</head>
+<body>
+
+<h1>Hugo Vignola · H de trazos</h1>
+
+<!-- ORIGINAL -->
+<div class="ref-box">
+  <svg width="80" height="80" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="50" cy="50" r="43" stroke="white" stroke-width="7"/>
+    <line x1="26" y1="18" x2="26" y2="82" stroke="white" stroke-width="11" stroke-linecap="square"/>
+    <line x1="74" y1="18" x2="74" y2="82" stroke="white" stroke-width="11" stroke-linecap="square"/>
+    <line x1="26" y1="50" x2="74" y2="50" stroke="white" stroke-width="11" stroke-linecap="square"/>
+  </svg>
+  <div class="ref-label">ORIGINAL — para referencia</div>
+</div>
+
+<div class="section-title">Variaciones en oscuro</div>
+
+<div class="grid">
+
+  <!-- A: Trazos más finos, círculo igual -->
+  <div class="option">
+    <div class="logo-box">
+      <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
+        <circle cx="50" cy="50" r="43" stroke="white" stroke-width="6"/>
+        <line x1="27" y1="20" x2="27" y2="80" stroke="white" stroke-width="7" stroke-linecap="square"/>
+        <line x1="73" y1="20" x2="73" y2="80" stroke="white" stroke-width="7" stroke-linecap="square"/>
+        <line x1="27" y1="50" x2="73" y2="50" stroke="white" stroke-width="7" stroke-linecap="square"/>
+      </svg>
+    </div>
+    <div class="label">
+      <div class="label-num">A</div>
+      <div class="label-name">Trazos finos</div>
+      <div class="label-desc">H más delgada, círculo casi igual al original</div>
+    </div>
+  </div>
+
+  <!-- B: Trazos iguales, círculo más fino -->
+  <div class="option">
+    <div class="logo-box">
+      <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
+        <circle cx="50" cy="50" r="43" stroke="white" stroke-width="3"/>
+        <line x1="26" y1="18" x2="26" y2="82" stroke="white" stroke-width="11" stroke-linecap="square"/>
+        <line x1="74" y1="18" x2="74" y2="82" stroke="white" stroke-width="11" stroke-linecap="square"/>
+        <line x1="26" y1="50" x2="74" y2="50" stroke="white" stroke-width="11" stroke-linecap="square"/>
+      </svg>
+    </div>
+    <div class="label">
+      <div class="label-num">B</div>
+      <div class="label-name">Círculo fino</div>
+      <div class="label-desc">H idéntica al original, solo el círculo más delgado</div>
+    </div>
+  </div>
+
+  <!-- C: Todo más fino, más aire entre H y círculo -->
+  <div class="option">
+    <div class="logo-box">
+      <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
+        <circle cx="50" cy="50" r="43" stroke="white" stroke-width="3.5"/>
+        <line x1="28" y1="22" x2="28" y2="78" stroke="white" stroke-width="7" stroke-linecap="square"/>
+        <line x1="72" y1="22" x2="72" y2="78" stroke="white" stroke-width="7" stroke-linecap="square"/>
+        <line x1="28" y1="50" x2="72" y2="50" stroke="white" stroke-width="7" stroke-linecap="square"/>
+      </svg>
+    </div>
+    <div class="label">
+      <div class="label-num">C</div>
+      <div class="label-name">Todo fino + aire</div>
+      <div class="label-desc">H más pequeña dentro del círculo, más espacio alrededor</div>
+    </div>
+  </div>
+
+  <!-- D: Trazos iguales, crossbar más delgado que las piernas -->
+  <div class="option">
+    <div class="logo-box">
+      <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
+        <circle cx="50" cy="50" r="43" stroke="white" stroke-width="6"/>
+        <line x1="26" y1="18" x2="26" y2="82" stroke="white" stroke-width="11" stroke-linecap="square"/>
+        <line x1="74" y1="18" x2="74" y2="82" stroke="white" stroke-width="11" stroke-linecap="square"/>
+        <line x1="26" y1="50" x2="74" y2="50" stroke="white" stroke-width="5" stroke-linecap="square"/>
+      </svg>
+    </div>
+    <div class="label">
+      <div class="label-num">D</div>
+      <div class="label-name">Crossbar fino</div>
+      <div class="label-desc">Piernas de la H gruesas, el puente más delgado</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="divider"></div>
+<div class="section-title">Las mismas en fondo claro</div>
+
+<div class="grid">
+
+  <div class="option">
+    <div class="logo-box light">
+      <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
+        <circle cx="50" cy="50" r="43" stroke="#080810" stroke-width="6"/>
+        <line x1="27" y1="20" x2="27" y2="80" stroke="#080810" stroke-width="7" stroke-linecap="square"/>
+        <line x1="73" y1="20" x2="73" y2="80" stroke="#080810" stroke-width="7" stroke-linecap="square"/>
+        <line x1="27" y1="50" x2="73" y2="50" stroke="#080810" stroke-width="7" stroke-linecap="square"/>
+      </svg>
+    </div>
+    <div class="label">
+      <div class="label-num">A</div>
+      <div class="label-name">Trazos finos</div>
+    </div>
+  </div>
+
+  <div class="option">
+    <div class="logo-box light">
+      <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
+        <circle cx="50" cy="50" r="43" stroke="#080810" stroke-width="3"/>
+        <line x1="26" y1="18" x2="26" y2="82" stroke="#080810" stroke-width="11" stroke-linecap="square"/>
+        <line x1="74" y1="18" x2="74" y2="82" stroke="#080810" stroke-width="11" stroke-linecap="square"/>
+        <line x1="26" y1="50" x2="74" y2="50" stroke="#080810" stroke-width="11" stroke-linecap="square"/>
+      </svg>
+    </div>
+    <div class="label">
+      <div class="label-num">B</div>
+      <div class="label-name">Círculo fino</div>
+    </div>
+  </div>
+
+  <div class="option">
+    <div class="logo-box light">
+      <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
+        <circle cx="50" cy="50" r="43" stroke="#080810" stroke-width="3.5"/>
+        <line x1="28" y1="22" x2="28" y2="78" stroke="#080810" stroke-width="7" stroke-linecap="square"/>
+        <line x1="72" y1="22" x2="72" y2="78" stroke="#080810" stroke-width="7" stroke-linecap="square"/>
+        <line x1="28" y1="50" x2="72" y2="50" stroke="#080810" stroke-width="7" stroke-linecap="square"/>
+      </svg>
+    </div>
+    <div class="label">
+      <div class="label-num">C</div>
+      <div class="label-name">Todo fino + aire</div>
+    </div>
+  </div>
+
+  <div class="option">
+    <div class="logo-box light">
+      <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
+        <circle cx="50" cy="50" r="43" stroke="#080810" stroke-width="6"/>
+        <line x1="26" y1="18" x2="26" y2="82" stroke="#080810" stroke-width="11" stroke-linecap="square"/>
+        <line x1="74" y1="18" x2="74" y2="82" stroke="#080810" stroke-width="11" stroke-linecap="square"/>
+        <line x1="26" y1="50" x2="74" y2="50" stroke="#080810" stroke-width="5" stroke-linecap="square"/>
+      </svg>
+    </div>
+    <div class="label">
+      <div class="label-num">D</div>
+      <div class="label-name">Crossbar fino</div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

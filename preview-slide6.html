@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Preview Slides 6–7</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-snap-type: y mandatory; }
+  body { background: #09090e; color: #f0f0f5; font-family: 'Space Grotesk', sans-serif; overflow-x: hidden; }
+  .slide {
+    min-height: 100vh; scroll-snap-align: start;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: flex-start;
+    padding: 60px 80px; position: relative; overflow: hidden;
+  }
+  .photo-bg {
+    position: absolute; inset: 0;
+    background-size: cover; background-position: center; z-index: 0;
+  }
+  .photo-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, rgba(9,9,14,0.45) 0%, rgba(9,9,14,0.72) 60%, rgba(9,9,14,0.88) 100%);
+    z-index: 1;
+  }
+  .photo-content { position: relative; z-index: 2; max-width: 720px; }
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 4px; text-transform: uppercase;
+    color: #D4A847; text-shadow: 0 1px 8px rgba(0,0,0,0.8); margin-bottom: 18px;
+  }
+  .photo-caption {
+    font-size: 44px; font-weight: 700; line-height: 1.08;
+    letter-spacing: -1.5px; margin-bottom: 20px;
+    text-shadow: 0 2px 16px rgba(0,0,0,0.6);
+  }
+  .photo-sub {
+    font-family: 'Newsreader', serif; font-style: italic;
+    font-size: 18px; color: #b0b0c8; line-height: 1.65;
+    text-shadow: 0 1px 8px rgba(0,0,0,0.6);
+  }
+  .slide-num {
+    position: absolute; top: 32px; right: 44px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: rgba(240,240,245,0.35);
+    letter-spacing: 1px; z-index: 3;
+  }
+</style>
+</head>
+<body>
+
+<!-- SLIDE 6 -->
+<div class="slide" id="slide-6">
+  <div class="slide-num">06 / 12</div>
+  <div class="photo-bg" style="background-image:url('slide_iluminacion.jpg');"></div>
+  <div class="photo-overlay"></div>
+  <div class="photo-content">
+    <div class="section-label">Diseño lumínico</div>
+    <div class="photo-caption">Cuando la luz<br>le habla al público.</div>
+    <div class="photo-sub">Cada show tiene su propio diseño de iluminación — coordinado directamente con el equipo del artista, sincronizado al segundo con la música, y ejecutado con el nivel técnico que se exige en los escenarios más grandes del país. El público no ve equipos. Siente el show.</div>
+  </div>
+</div>
+
+<!-- SLIDE 7 -->
+<div class="slide" id="slide-7">
+  <div class="slide-num">07 / 12</div>
+  <div class="photo-bg" style="background-image:url('slide_fuego.jpg');background-position:center 30%;"></div>
+  <div class="photo-overlay"></div>
+  <div class="photo-content">
+    <div class="section-label" style="color:rgba(212,168,71,0.85)">Efectos especiales</div>
+    <div class="photo-caption">Lo que el público<br>nunca olvida.</div>
+    <div class="photo-sub">Fuego, lluvia de chispas, niebla, pirotecnia y efectos especiales integrados en tiempo real con la música. No son adornos — son parte del show. Trabajamos con los mismos efectos que usan los artistas en sus giras nacionales e internacionales, adaptados al espacio y con todos los permisos de protección civil.</div>
+  </div>
+</div>
+
+</body>
+</html>

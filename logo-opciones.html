@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Logo Hugo Vignola — Opciones</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #080810;
+    color: #f0f0f8;
+    font-family: 'Space Grotesk', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 60px 40px;
+    gap: 80px;
+  }
+
+  h1 {
+    font-size: 13px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #404058;
+    font-family: 'JetBrains Mono', monospace;
+    text-align: center;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+    max-width: 900px;
+    width: 100%;
+  }
+
+  .option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .logo-box {
+    width: 180px;
+    height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    background: #0e0e1a;
+    border: 1px solid #1f1f32;
+  }
+
+  .logo-box.light {
+    background: #f5f5f7;
+  }
+
+  .label {
+    text-align: center;
+  }
+
+  .label-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: #ff2d78;
+    margin-bottom: 6px;
+  }
+
+  .label-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #f0f0f8;
+    margin-bottom: 4px;
+  }
+
+  .label-desc {
+    font-size: 12px;
+    color: #606080;
+    line-height: 1.5;
+    max-width: 160px;
+  }
+
+  .divider {
+    width: 100%;
+    max-width: 900px;
+    height: 1px;
+    background: #1f1f32;
+  }
+
+  .section-title {
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #404058;
+    font-family: 'JetBrains Mono', monospace;
+    align-self: flex-start;
+    max-width: 900px;
+    width: 100%;
+  }
+</style>
+</head>
+<body>
+
+<h1>Hugo Vignola · Opciones de logo</h1>
+
+<div class="section-title">Versiones en negro</div>
+
+<div class="grid">
+
+  <!-- OPCIÓN 1: Original modernizado — líneas más finas, misma estructura -->
+  <div class="option">
+    <div class="logo-box">
+      <svg width="110" height="110" viewBox="0 0 110 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Círculo fino -->
+        <circle cx="55" cy="55" r="48" stroke="white" stroke-width="2.5"/>
+        <!-- H geométrica refinada, proporciones ajustadas -->
+        <rect x="28" y="26" width="9" height="58" fill="white"/>
+        <rect x="73" y="26" width="9" height="58" fill="white"/>
+        <rect x="28" y="46.5" width="54" height="17" fill="white"/>
+        <!-- Hueco H -->
+        <rect x="37" y="26" width="12.5" height="20.5" fill="#080810"/>
+        <rect x="60.5" y="26" width="12.5" height="20.5" fill="#080810"/>
+        <rect x="37" y="63.5" width="12.5" height="20.5" fill="#080810"/>
+        <rect x="60.5" y="63.5" width="12.5" height="20.5" fill="#080810"/>
+      </svg>
+    </div>
+    <div class="label">
+      <div class="label-num">01</div>
+      <div class="label-name">Refinado</div>
+      <div class="label-desc">Misma estructura, líneas más delgadas y proporciones más elegantes</div>
+    </div>
+  </div>
+
+  <!-- OPCIÓN 2: Círculo abierto (arco) — muy moderno -->
+  <div class="option">
+    <div class="logo-box">
+      <svg width="110" height="110" viewBox="0 0 110 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Arco abierto en la parte superior derecha -->
+        <path d="M 75 12 A 48 48 0 1 1 74 12" stroke="white" stroke-width="2.5" stroke-linecap="round" fill="none"
+              stroke-dasharray="270 30"
+              pathLength="300"/>
+        <!-- H geométrica refinada -->
+        <rect x="28" y="26" width="9" height="58" fill="white"/>
+        <rect x="73" y="26" width="9" height="58" fill="white"/>
+        <rect x="28" y="46.5" width="54" height="17" fill="white"/>
+        <rect x="37" y="26" width="12.5" height="20.5" fill="#080810"/>
+        <rect x="60.5" y="26" width="12.5" height="20.5" fill="#080810"/>
+        <rect x="37" y="63.5" width="12.5" height="20.5" fill="#080810"/>
+        <rect x="60.5" y="63.5" width="12.5" height="20.5" fill="#080810"/>
+      </svg>
+    </div>
+    <div class="label">
+      <div class="label-num">02</div>
+      <div class="label-name">Círculo abierto</div>
+      <div class="label-desc">El arco incompleto da dinamismo y modernidad sin perder el símbolo</div>
+    </div>
+  </div>
+
+  <!-- OPCIÓN 3: Solo la H, sin círculo. Bold y minimalista -->
+  <div class="option">
+    <div class="logo-box">
+      <svg width="110" height="110" viewBox="0 0 110 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- H standalone, proporciones premium -->
+        <rect x="20" y="18" width="14" height="74" rx="2" fill="white"/>
+        <rect x="76" y="18" width="14" height="74" rx="2" fill="white"/>
+        <rect x="20" y="42" width="70" height="26" rx="2" fill="white"/>
+        <rect x="34" y="18" width="16" height="24" rx="0" fill="#080810"/>
+        <rect x="60" y="18" width="16" height="24" rx="0" fill="#080810"/>
+        <rect x="34" y="68" width="16" height="24" rx="0" fill="#080810"/>
+        <rect x="60" y="68" width="16" height="24" rx="0" fill="#080810"/>
+      </svg>
+    </div>
+    <div class="label">
+      <div class="label-num">03</div>
+      <div class="label-name">Solo H</div>
+      <div class="label-desc">Sin círculo, más bold. Para marcas que hablan solas</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="divider"></div>
+<div class="section-title">Versiones en blanco (para fondos claros)</div>
+
+<div class="grid">
+
+  <div class="option">
+    <div class="logo-box light">
+      <svg width="110" height="110" viewBox="0 0 110 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="55" cy="55" r="48" stroke="#080810" stroke-width="2.5"/>
+        <rect x="28" y="26" width="9" height="58" fill="#080810"/>
+        <rect x="73" y="26" width="9" height="58" fill="#080810"/>
+        <rect x="28" y="46.5" width="54" height="17" fill="#080810"/>
+        <rect x="37" y="26" width="12.5" height="20.5" fill="#f5f5f7"/>
+        <rect x="60.5" y="26" width="12.5" height="20.5" fill="#f5f5f7"/>
+        <rect x="37" y="63.5" width="12.5" height="20.5" fill="#f5f5f7"/>
+        <rect x="60.5" y="63.5" width="12.5" height="20.5" fill="#f5f5f7"/>
+      </svg>
+    </div>
+    <div class="label">
+      <div class="label-num">01</div>
+      <div class="label-name">Refinado</div>
+      <div class="label-desc">Sobre fondo claro</div>
+    </div>
+  </div>
+
+  <div class="option">
+    <div class="logo-box light">
+      <svg width="110" height="110" viewBox="0 0 110 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M 75 12 A 48 48 0 1 1 74 12" stroke="#080810" stroke-width="2.5" stroke-linecap="round" fill="none"
+              stroke-dasharray="270 30" pathLength="300"/>
+        <rect x="28" y="26" width="9" height="58" fill="#080810"/>
+        <rect x="73" y="26" width="9" height="58" fill="#080810"/>
+        <rect x="28" y="46.5" width="54" height="17" fill="#080810"/>
+        <rect x="37" y="26" width="12.5" height="20.5" fill="#f5f5f7"/>
+        <rect x="60.5" y="26" width="12.5" height="20.5" fill="#f5f5f7"/>
+        <rect x="37" y="63.5" width="12.5" height="20.5" fill="#f5f5f7"/>
+        <rect x="60.5" y="63.5" width="12.5" height="20.5" fill="#f5f5f7"/>
+      </svg>
+    </div>
+    <div class="label">
+      <div class="label-num">02</div>
+      <div class="label-name">Círculo abierto</div>
+      <div class="label-desc">Sobre fondo claro</div>
+    </div>
+  </div>
+
+  <div class="option">
+    <div class="logo-box light">
+      <svg width="110" height="110" viewBox="0 0 110 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="20" y="18" width="14" height="74" rx="2" fill="#080810"/>
+        <rect x="76" y="18" width="14" height="74" rx="2" fill="#080810"/>
+        <rect x="20" y="42" width="70" height="26" rx="2" fill="#080810"/>
+        <rect x="34" y="18" width="16" height="24" rx="0" fill="#f5f5f7"/>
+        <rect x="60" y="18" width="16" height="24" rx="0" fill="#f5f5f7"/>
+        <rect x="34" y="68" width="16" height="24" rx="0" fill="#f5f5f7"/>
+        <rect x="60" y="68" width="16" height="24" rx="0" fill="#f5f5f7"/>
+      </svg>
+    </div>
+    <div class="label">
+      <div class="label-num">03</div>
+      <div class="label-name">Solo H</div>
+      <div class="label-desc">Sobre fondo claro</div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

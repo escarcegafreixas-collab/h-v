@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Preview Slide 1</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #09090e; }
+
+  .slide {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    color: #f0f0f5;
+    font-family: 'Space Grotesk', sans-serif;
+  }
+
+  .photo-bg {
+    position: absolute;
+    inset: 0;
+    background-image: url('JPEGs/7.jpg');
+    background-size: cover;
+    background-position: center 30%;
+    z-index: 0;
+  }
+
+  .photo-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(9,9,14,0.55) 0%,
+      rgba(9,9,14,0.65) 50%,
+      rgba(9,9,14,0.80) 100%
+    );
+    z-index: 1;
+  }
+
+  .content {
+    position: relative;
+    z-index: 2;
+    padding: 40px;
+  }
+
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #D4A847;
+    margin-bottom: 20px;
+  }
+
+  h1 {
+    font-size: 68px;
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -2px;
+    margin-bottom: 24px;
+  }
+
+  .highlight { color: #D4A847; }
+
+  .subtitle {
+    font-family: 'Newsreader', serif;
+    font-style: italic;
+    font-size: 22px;
+    color: #9090a8;
+    margin-bottom: 36px;
+  }
+
+  .divider {
+    width: 40px;
+    height: 2px;
+    background: #D4A847;
+    margin: 0 auto 20px;
+    border-radius: 2px;
+  }
+
+  .author {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 4px;
+    color: #505068;
+    text-transform: uppercase;
+  }
+
+  .slide-num {
+    position: absolute;
+    top: 32px;
+    right: 44px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: rgba(240,240,245,0.35);
+    letter-spacing: 1px;
+    z-index: 3;
+  }
+</style>
+</head>
+<body>
+<div class="slide">
+  <div class="slide-num">01 / 12</div>
+  <div class="photo-bg"></div>
+  <div class="photo-overlay"></div>
+  <div class="content">
+    <div class="section-label">Playa del Carmen · Quintana Roo</div>
+    <h1>Cuando quien<br>gobierna decide<br><span class="highlight">dar lo mejor.</span></h1>
+    <p class="subtitle">La gente lo recuerda mucho tiempo.</p>
+    <div class="divider"></div>
+    <p class="author">HUGO VIGNOLA · PRODUCCIÓN DE EVENTOS</p>
+  </div>
+</div>
+</body>
+</html>

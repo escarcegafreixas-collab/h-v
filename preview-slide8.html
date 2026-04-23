@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Preview Slide 8</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #09090e; }
+  .slide {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+    color: #f0f0f5;
+    font-family: 'Space Grotesk', sans-serif;
+  }
+  .fade-bg {
+    position: absolute; inset: 0;
+    background-size: cover; background-position: center;
+    z-index: 0; opacity: 0; transition: opacity 1.5s ease-in-out;
+  }
+  .fade-bg.active { opacity: 1; }
+  .photo-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(9,9,14,0.88) 0%, rgba(9,9,14,0.3) 50%, rgba(9,9,14,0.1) 100%);
+    z-index: 1;
+  }
+  .photo-content {
+    position: relative; z-index: 2;
+    padding: 0 80px 72px;
+    align-self: flex-end;
+    width: 100%; max-width: 900px; margin: 0 auto;
+  }
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 4px;
+    text-transform: uppercase; color: rgba(212,168,71,0.85);
+    margin-bottom: 14px;
+  }
+  .photo-caption {
+    font-size: 30px; font-weight: 700;
+    letter-spacing: -0.5px; line-height: 1.2;
+    margin-bottom: 10px;
+  }
+  .photo-sub {
+    font-size: 16px; color: rgba(240,240,245,0.65);
+    font-family: 'Newsreader', serif; font-style: italic;
+  }
+  .slide-num {
+    position: absolute; top: 32px; right: 44px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: rgba(240,240,245,0.4);
+    letter-spacing: 1px; z-index: 3;
+  }
+</style>
+</head>
+<body>
+<div class="slide">
+  <div class="slide-num">08 / 12</div>
+  <div class="fade-bg active" style="background-image:url('slide_s8.jpg');"></div>
+  <div class="fade-bg" style="background-image:url('slide_s8_2.jpg');"></div>
+  <div class="photo-overlay"></div>
+  <div class="photo-content">
+    <div class="section-label">El momento</div>
+    <div class="photo-caption">Del contrato al escenario<br>— sin sorpresas.</div>
+    <div class="photo-sub">Gestionamos el rider, coordinamos al equipo de gira, atendemos hospitalidad y traslados. El artista llega, ensaya y actúa. La institución no tiene que resolver nada.</div>
+  </div>
+</div>
+<script>
+  const fadeBgs = document.querySelectorAll('.fade-bg');
+  let idx = 0;
+  setInterval(() => {
+    fadeBgs[idx].classList.remove('active');
+    idx = (idx + 1) % fadeBgs.length;
+    fadeBgs[idx].classList.add('active');
+  }, 3000);
+</script>
+</body>
+</html>
