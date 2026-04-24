@@ -1036,9 +1036,32 @@
         });
         const index = [...slides].indexOf(entry.target);
         dots.forEach((d, i) => d.classList.toggle('active', i === index));
+
+        // Force-play any video in the visible slide (fixes iOS autoplay)
+        entry.target.querySelectorAll('video').forEach(v => {
+          v.play().catch(() => {});
+        });
+      } else {
+        // Pause videos in slides that are off-screen to save resources
+        entry.target.querySelectorAll('video').forEach(v => {
+          v.pause();
+        });
       }
     });
-  }, { threshold: 0.5 });
+  }, { threshold: 0.4 });
+
+  // iOS requires a user gesture before any audio/video plays.
+  // On first touch/click, try to play all videos.
+  let videosUnlocked = false;
+  function unlockVideos() {
+    if (videosUnlocked) return;
+    videosUnlocked = true;
+    document.querySelectorAll('video').forEach(v => {
+      v.play().catch(() => {});
+    });
+  }
+  document.addEventListener('touchstart', unlockVideos, { once: true });
+  document.addEventListener('click', unlockVideos, { once: true });
 
   slides.forEach(slide => observer.observe(slide));
 
