@@ -624,6 +624,32 @@
 </head>
 <body>
 
+<!-- LOADING SCREEN -->
+<div id="loading-screen" style="
+  position:fixed;inset:0;z-index:99999;
+  background:#09090e;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:28px;
+  transition:opacity 0.8s ease;
+">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="64" height="64">
+    <circle cx="100" cy="100" r="90" fill="none" stroke="#ffffff" stroke-width="10"/>
+    <rect x="52" y="34" width="26" height="132" fill="#ffffff"/>
+    <rect x="122" y="34" width="26" height="132" fill="#ffffff"/>
+    <rect x="52" y="89" width="96" height="22" fill="#ffffff"/>
+  </svg>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:14px;">
+    <div style="font-family:'Space Grotesk',sans-serif;font-size:15px;color:rgba(240,240,245,0.5);letter-spacing:3px;text-transform:uppercase;">Cargando</div>
+    <div id="loading-bar-wrap" style="width:160px;height:2px;background:rgba(255,255,255,0.1);border-radius:2px;overflow:hidden;">
+      <div id="loading-bar" style="height:100%;width:0%;background:#D4A847;border-radius:2px;transition:width 0.3s ease;"></div>
+    </div>
+  </div>
+</div>
+<style>
+  #loading-screen.hidden { opacity:0; pointer-events:none; }
+</style>
+
 <div class="nav-dots" id="navDots"></div>
 
 <!-- ROTATE MESSAGE -->
@@ -1016,6 +1042,45 @@
 </div>
 
 <script>
+  // ── LOADING SCREEN ──────────────────────────────────────────────────────────
+  const loadingScreen = document.getElementById('loading-screen');
+  const loadingBar    = document.getElementById('loading-bar');
+  const videos        = [...document.querySelectorAll('video')];
+  let loaded = 0;
+
+  function updateBar() {
+    loaded++;
+    const pct = Math.round((loaded / videos.length) * 100);
+    loadingBar.style.width = pct + '%';
+    if (loaded >= videos.length) dismissLoading();
+  }
+
+  function dismissLoading() {
+    loadingBar.style.width = '100%';
+    setTimeout(() => {
+      loadingScreen.classList.add('hidden');
+      setTimeout(() => loadingScreen.remove(), 850);
+    }, 300);
+  }
+
+  if (videos.length === 0) {
+    dismissLoading();
+  } else {
+    // Fallback: dismiss after 6 seconds even if some videos stall
+    const fallback = setTimeout(dismissLoading, 6000);
+
+    videos.forEach(v => {
+      if (v.readyState >= 3) {          // already buffered
+        updateBar();
+      } else {
+        v.addEventListener('canplay', () => { updateBar(); clearTimeout(fallback); }, { once: true });
+        v.addEventListener('error',   () => { updateBar(); }, { once: true });
+        v.load();
+      }
+    });
+  }
+  // ────────────────────────────────────────────────────────────────────────────
+
   const slides = document.querySelectorAll('.slide');
   const dotsContainer = document.getElementById('navDots');
   slides.forEach((_, i) => {
