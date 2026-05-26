@@ -10,23 +10,17 @@
   }
 </script>
 <title>Hugo Vignola — Producción de Eventos</title>
-
-<!-- ======================================================
-     OPEN GRAPH — preview en WhatsApp, iMessage, LinkedIn
-     Cambia TU-USUARIO y TU-REPO por los tuyos de GitHub
-     Ejemplo: https://alonsoe.github.io/eventos/
-     ====================================================== -->
-<meta property="og:type"        content="website">
-<meta property="og:title"       content="Hugo Vignola — Producción de Eventos">
-<meta property="og:description" content="Producción integral de eventos masivos. +430,000 personas. Cero incidentes. Una sola empresa detrás de todo.">
-<meta property="og:image"       content="https://hugovignola-eventos.com/slide_aerea.jpg">
+<meta property="og:type"         content="website">
+<meta property="og:title"        content="Hugo Vignola — Producción de Eventos">
+<meta property="og:description"  content="Producción integral de eventos masivos. +430,000 personas. Cero incidentes. Una sola empresa detrás de todo.">
+<meta property="og:image"        content="https://hugovignola-eventos.com/slide_aerea.jpg">
 <meta property="og:image:width"  content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:url"         content="https://hugovignola-eventos.com/">
-<meta name="twitter:card"       content="summary_large_image">
-<meta name="twitter:title"      content="Hugo Vignola — Producción de Eventos">
+<meta property="og:url"          content="https://hugovignola-eventos.com/">
+<meta name="twitter:card"        content="summary_large_image">
+<meta name="twitter:title"       content="Hugo Vignola — Producción de Eventos">
 <meta name="twitter:description" content="Producción integral de eventos masivos. +430,000 personas. Cero incidentes.">
-<meta name="twitter:image"      content="https://hugovignola-eventos.com/slide_aerea.jpg">
+<meta name="twitter:image"       content="https://hugovignola-eventos.com/slide_aerea.jpg">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -202,11 +196,10 @@
   }
   .subtext {
     font-size: clamp(11px, min(1.4vw, 3vh), 17px);
-    color: rgba(220, 220, 235, 0.92);
+    color: var(--text-muted);
     margin-top: clamp(14px, 2.5vh, 28px);
     text-align: center;
     max-width: 640px;
-    text-shadow: 0 1px 10px rgba(0,0,0,0.95), 0 2px 28px rgba(0,0,0,0.85);
   }
   .statement-tag {
     font-family: 'JetBrains Mono', monospace;
@@ -621,7 +614,7 @@
   @media (max-height: 430px) {
     .slide-title h1 { margin-bottom: 12px; }
     .slide-title .subtitle { margin-bottom: 16px; }
-    .closing-logo { margin-bottom: 8px; }
+    .closing-logo { margin-bottom: 12px; display: none; }
     .closing-name { margin-bottom: 16px; }
     .total-row { margin-top: 8px; padding: 10px 14px; }
     .total-label { font-size: 10px; }
@@ -640,32 +633,6 @@
 </style>
 </head>
 <body>
-
-<!-- LOADING SCREEN -->
-<div id="loading-screen" style="
-  position:fixed;inset:0;z-index:99999;
-  background:#09090e;
-  display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-  gap:28px;
-  transition:opacity 0.8s ease;
-">
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="64" height="64">
-    <circle cx="100" cy="100" r="90" fill="none" stroke="#ffffff" stroke-width="10"/>
-    <rect x="52" y="34" width="26" height="132" fill="#ffffff"/>
-    <rect x="122" y="34" width="26" height="132" fill="#ffffff"/>
-    <rect x="52" y="89" width="96" height="22" fill="#ffffff"/>
-  </svg>
-  <div style="display:flex;flex-direction:column;align-items:center;gap:14px;">
-    <div style="font-family:'Space Grotesk',sans-serif;font-size:15px;color:rgba(240,240,245,0.5);letter-spacing:3px;text-transform:uppercase;">Cargando</div>
-    <div id="loading-bar-wrap" style="width:160px;height:2px;background:rgba(255,255,255,0.1);border-radius:2px;overflow:hidden;">
-      <div id="loading-bar" style="height:100%;width:0%;background:#D4A847;border-radius:2px;transition:width 0.3s ease;"></div>
-    </div>
-  </div>
-</div>
-<style>
-  #loading-screen.hidden { opacity:0; pointer-events:none; }
-</style>
 
 <div class="nav-dots" id="navDots"></div>
 
@@ -711,7 +678,7 @@
   <video autoplay muted loop playsinline style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;">
     <source src="malilla_limpio.mp4" type="video/mp4">
   </video>
-  <div class="photo-overlay" style="background:linear-gradient(to bottom,rgba(9,9,14,0.55) 0%,rgba(9,9,14,0.80) 100%);z-index:1;"></div>
+  <div class="photo-overlay" style="background:linear-gradient(to bottom,rgba(9,9,14,0.45) 0%,rgba(9,9,14,0.70) 100%);z-index:1;"></div>
   <div style="position:relative;z-index:2;padding:40px;display:flex;flex-direction:column;align-items:center;">
     <p class="big-quote animate">Cuando se apuesta por la gente,<br>se elige lo <em>mejor.</em></p>
     <p class="subtext animate delay-1">Escenarios de categoría mundial, artistas de alcance nacional e internacional, y una producción técnica impecable. Todo coordinado. Todo en tiempo. Todo bajo un mismo equipo.</p>
@@ -899,7 +866,7 @@
 <div class="slide" id="slide-7" style="padding:0;position:relative;overflow:hidden;">
   <div class="slide-num" style="z-index:3;color:rgba(240,240,245,0.4);">07 / 12</div>
   <video autoplay muted loop playsinline style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;">
-    <source src="slide7_efectos_new.mp4" type="video/mp4">
+    <source src="slide7_efectos.mp4" type="video/mp4">
   </video>
   <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(9,9,14,0.88) 0%,rgba(9,9,14,0.35) 60%,rgba(9,9,14,0.15) 100%);z-index:1;"></div>
   <div class="photo-content animate" style="position:relative;z-index:2;padding:0 clamp(24px,5vw,80px) clamp(20px,4vh,72px);align-self:flex-end;width:100%;max-width:900px;margin:0 auto;">
@@ -1029,7 +996,7 @@
   <div class="photo-overlay"></div>
   <div class="closing-content animate">
     <div class="closing-logo">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" style="width:clamp(44px,7vh,80px);height:clamp(44px,7vh,80px);">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="80" height="80">
         <circle cx="100" cy="100" r="90" fill="none" stroke="#ffffff" stroke-width="10"/>
         <rect x="52" y="34" width="26" height="132" fill="#ffffff"/>
         <rect x="122" y="34" width="26" height="132" fill="#ffffff"/>
@@ -1059,45 +1026,6 @@
 </div>
 
 <script>
-  // ── LOADING SCREEN ──────────────────────────────────────────────────────────
-  const loadingScreen = document.getElementById('loading-screen');
-  const loadingBar    = document.getElementById('loading-bar');
-  const videos        = [...document.querySelectorAll('video')];
-  let loaded = 0;
-
-  function updateBar() {
-    loaded++;
-    const pct = Math.round((loaded / videos.length) * 100);
-    loadingBar.style.width = pct + '%';
-    if (loaded >= videos.length) dismissLoading();
-  }
-
-  function dismissLoading() {
-    loadingBar.style.width = '100%';
-    setTimeout(() => {
-      loadingScreen.classList.add('hidden');
-      setTimeout(() => loadingScreen.remove(), 850);
-    }, 300);
-  }
-
-  if (videos.length === 0) {
-    dismissLoading();
-  } else {
-    // Fallback: dismiss after 6 seconds even if some videos stall
-    const fallback = setTimeout(dismissLoading, 6000);
-
-    videos.forEach(v => {
-      if (v.readyState >= 3) {          // already buffered
-        updateBar();
-      } else {
-        v.addEventListener('canplay', () => { updateBar(); clearTimeout(fallback); }, { once: true });
-        v.addEventListener('error',   () => { updateBar(); }, { once: true });
-        v.load();
-      }
-    });
-  }
-  // ────────────────────────────────────────────────────────────────────────────
-
   const slides = document.querySelectorAll('.slide');
   const dotsContainer = document.getElementById('navDots');
   slides.forEach((_, i) => {
@@ -1118,32 +1046,9 @@
         });
         const index = [...slides].indexOf(entry.target);
         dots.forEach((d, i) => d.classList.toggle('active', i === index));
-
-        // Force-play any video in the visible slide (fixes iOS autoplay)
-        entry.target.querySelectorAll('video').forEach(v => {
-          v.play().catch(() => {});
-        });
-      } else {
-        // Pause videos in slides that are off-screen to save resources
-        entry.target.querySelectorAll('video').forEach(v => {
-          v.pause();
-        });
       }
     });
-  }, { threshold: 0.4 });
-
-  // iOS requires a user gesture before any audio/video plays.
-  // On first touch/click, try to play all videos.
-  let videosUnlocked = false;
-  function unlockVideos() {
-    if (videosUnlocked) return;
-    videosUnlocked = true;
-    document.querySelectorAll('video').forEach(v => {
-      v.play().catch(() => {});
-    });
-  }
-  document.addEventListener('touchstart', unlockVideos, { once: true });
-  document.addEventListener('click', unlockVideos, { once: true });
+  }, { threshold: 0.5 });
 
   slides.forEach(slide => observer.observe(slide));
 
