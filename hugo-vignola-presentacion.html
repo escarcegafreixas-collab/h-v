@@ -643,7 +643,29 @@
     <div id="loading-bar-wrap" style="width:160px;height:2px;background:rgba(255,255,255,0.1);border-radius:2px;overflow:hidden;"><div id="loading-bar" style="height:100%;width:0%;background:#D4A847;border-radius:2px;transition:width 0.3s ease;"></div></div>
   </div>
 </div>
-<style>#loading-screen.hidden{opacity:0;pointer-events:none;}</style>
+<style>
+  #loading-screen.hidden { opacity:0; pointer-events:none; }
+  @keyframes pulse-logo {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: 0.6; transform: scale(0.92); }
+  }
+  @keyframes shimmer {
+    0%   { background-position: -200px 0; }
+    100% { background-position: 200px 0; }
+  }
+  #loading-screen svg {
+    animation: pulse-logo 2s ease-in-out infinite;
+  }
+  #loading-bar-wrap {
+    background: linear-gradient(90deg,
+      rgba(255,255,255,0.06) 25%,
+      rgba(255,255,255,0.12) 50%,
+      rgba(255,255,255,0.06) 75%
+    ) !important;
+    background-size: 400px 100% !important;
+    animation: shimmer 2s linear infinite;
+  }
+</style>
 
 <div class="nav-dots" id="navDots"></div>
 
@@ -1042,26 +1064,36 @@
   const loadingBar    = document.getElementById("loading-bar");
   const videos        = [...document.querySelectorAll("video")];
   let loaded = 0;
+  const MIN_SHOW  = 3000;   // mínimo 3 s visible aunque cargue rápido
+  const FALLBACK  = 12000;  // máximo 12 s si la conexión es lenta
+  const startTime = Date.now();
+
   function updateBar() {
     loaded++;
-    loadingBar.style.width = Math.round((loaded / videos.length) * 100) + "%";
-    if (loaded >= videos.length) dismissLoading();
+    const pct = Math.round((loaded / videos.length) * 100);
+    loadingBar.style.width = pct + "%";
+    if (loaded >= videos.length) readyToDismiss();
+  }
+  function readyToDismiss() {
+    const elapsed   = Date.now() - startTime;
+    const remaining = Math.max(0, MIN_SHOW - elapsed);
+    setTimeout(dismissLoading, remaining);
   }
   function dismissLoading() {
     loadingBar.style.width = "100%";
     setTimeout(() => {
       loadingScreen.classList.add("hidden");
-      setTimeout(() => loadingScreen.remove(), 850);
-    }, 300);
+      setTimeout(() => loadingScreen.remove(), 900);
+    }, 400);
   }
-  if (videos.length === 0) { dismissLoading(); }
+  if (videos.length === 0) { setTimeout(dismissLoading, MIN_SHOW); }
   else {
-    const fallback = setTimeout(dismissLoading, 6000);
+    setTimeout(dismissLoading, FALLBACK);   // seguro máximo
     videos.forEach(v => {
       if (v.readyState >= 3) { updateBar(); }
       else {
-        v.addEventListener("canplay", () => { updateBar(); clearTimeout(fallback); }, { once: true });
-        v.addEventListener("error", () => { updateBar(); }, { once: true });
+        v.addEventListener("canplay", () => updateBar(), { once: true });
+        v.addEventListener("error",   () => updateBar(), { once: true });
         v.load();
       }
     });
